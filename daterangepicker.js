@@ -480,6 +480,7 @@
                 this.endDate = this.startDate.clone().add(this.dateLimit);
 
             this.updateMonthsInView();
+
         },
 
         updateView: function() {
@@ -1200,7 +1201,7 @@
             var col = title.substr(3, 1);
             var cal = $(e.target).parents('.calendar');
             var date = cal.hasClass('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
-
+            var setenddate=false;
             //
             // this function needs to do a few things:
             // * alternate between selecting a start and end date for the range,
@@ -1225,6 +1226,7 @@
                 }
                 this.endDate = null;
                 this.setStartDate(date.clone());
+                setenddate=false;
             } else {
                 if (this.timePicker) {
                     var hour = parseInt(this.container.find('.right .hourselect').val(), 10);
@@ -1240,17 +1242,25 @@
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
                 this.setEndDate(date.clone());
+                    setenddate=true;
                 if (this.autoApply)
                     this.clickApply();
             }
 
             if (this.singleDatePicker) {
                 this.setEndDate(this.startDate);
+                setenddate=true;
                 if (!this.timePicker)
                     this.clickApply();
             }
 
             this.updateView();
+
+            if(setenddate) {
+                this.element.trigger('setEndDate.daterangepicker', this);
+            }else{
+                this.element.trigger('setStartDate.daterangepicker', this);
+            }
 
         },
 
